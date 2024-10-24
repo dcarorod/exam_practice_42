@@ -1,3 +1,23 @@
+/*
+Test like this to confirm the fixed N results for n queens. Modify N to liking
+
+N=8
+RES=$(./n_queens $N | wc -l); N1=$(expr $N + 1); expr $RES / $N1
+
+Board	Total Solutions
+1x1	1
+2x2	0
+3x3	0
+4x4	2
+5x5	10
+6x6	4
+7x7	40
+8x8	92
+9x9	352
+10x10	724
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
