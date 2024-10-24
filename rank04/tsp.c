@@ -1,3 +1,26 @@
+/*
+Write a program that will read a set of city coordinates under the form '%f, %f\n' from the stdint and will print the length of the shortest possible path containing all these cities under the form %.2f
+
+Your program should work like this:
+
+cat square.txt
+0.0, 0.0
+0.0, 1.0
+1.0, 0.0
+1.0, 1.0
+
+$> ./tsp < square.txt | cat -e
+4.00$
+
+We will not test your program with more than 11 cities.
+
+Authorized functions (from memory, didn't write them down):
+* definitely yes: getline, sqrtf, stdin, stdout, fprintf, write
+* definitely not: printf
+* perhaps: fseek, ???
+*/
+
+
 #include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
