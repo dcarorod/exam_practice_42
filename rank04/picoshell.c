@@ -9,8 +9,6 @@ Functions to use: close fork wait, execvp, dup2 pipe
 
 Examples: 
 ./picoshell /bin/ls "|" grep "picoshell"
-./picoshell /bin/ls "|" grep "picoshell"
 picoshell
-./picoshell echo 'squalalala' | cat "|" sed something
-./picoshell echo 'squalalala' | cat "|" sed something
+./picoshell echo 'squalalala' "|" cat "|" sed '/s/la/me'
 */

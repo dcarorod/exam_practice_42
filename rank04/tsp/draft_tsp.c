@@ -3,13 +3,13 @@ Write a program that will read a set of city coordinates under the form '%f, %f\
 
 Your program should work like this:
 
-cat square.txt
+$ cat square.txt
 0.0, 0.0
 0.0, 1.0
 1.0, 0.0
 1.0, 1.0
 
-$> ./tsp < square.txt | cat -e
+$ ./tsp < square.txt | cat -e
 4.00$
 
 We will not test your program with more than 11 cities.
