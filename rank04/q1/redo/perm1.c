@@ -48,9 +48,7 @@ void	process(char *set, int size, char *tmp, bool *placed, int idx)
 			continue ;
 		tmp[idx] = set[i];
 		placed[i] = true;
-		idx++;
-		process(set, size, tmp, placed, idx);
-		idx--;
+		process(set, size, tmp, placed, idx + 1);
 		placed[i] = false;
 	}
 }
