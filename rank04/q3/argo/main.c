@@ -5,7 +5,7 @@ void	free_json(json j)
 	switch (j.type)
 	{
 		case MAP:
-			for (size_t i = 0; i < j.map.size; i + 1)
+			for (size_t i = 0; i < j.map.size; i++)
 			{
 				free(j.map.data[i].key);
 				free_json(j.map.data[i].value);
@@ -31,7 +31,7 @@ void	serialize(json j)
 			putchar('"');
 			for (int i = 0; j.string[i]; i++)
 			{
-				if (j.string[i] == '\\' || jstring[i] == '"')
+				if (j.string[i] == '\\' || j.string[i] == '"')
 					putchar('\\');
 				putchar(j.string[i]);
 			}

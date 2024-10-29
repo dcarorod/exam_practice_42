@@ -4,10 +4,6 @@
 #include <string.h>
 #include <malloc.h>
 
-typedef struct	pair {
-	char	*key;
-	json	value;
-}	pair;
 
 typedef struct	json {
 	enum {
@@ -24,6 +20,11 @@ typedef struct	json {
 		char	*string;
 	};
 }	json;
+
+typedef struct	pair {
+	char	*key;
+	json	value;
+}	pair;
 
 void	free_json(json j);
 int	argo(json *dst, FILE *stream);
