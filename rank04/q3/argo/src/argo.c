@@ -32,3 +32,4 @@ int	expect(FILE *stream, char c)
 	unexpected(stream);
 	return 0;
 }
+
