@@ -45,6 +45,7 @@ void	serialize(json j)
 					putchar(',');
 				serialize((json){.type = STRING, .string = j.map.data[i].key});
 				putchar(':');
+				putchar(' ');
 				serialize(j.map.data[i].value);
 			}
 			putchar('}');
@@ -65,5 +66,6 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	serialize(file);
+	free_json(file);
 	printf("\n");
 }

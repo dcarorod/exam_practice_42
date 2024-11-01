@@ -33,131 +33,129 @@ int	expect(FILE *stream, char c)
 	return 0;
 }
 
-size_t	ft_strlen(char *s)
+char	accept_and_get_next_scout(FILE *stream, char scout)
 {
-	size_t	i = 0;
-
-	while (s && s[i])
-		i++;
-	return (i);
+	accept(stream, scout);
+	return (peek(stream));
 }
 
-#define BAD -1
-#define MAP 0
-#define INTEGER 1
-#define STRING 2
-#define	SINGLE 1
-#define DOUBLE 2
-
-int	get_mode(char *s)
+char	*extract_string(FILE *stream, char scout)
 {
-	if (!s || !s[0] || s[0] == '\"')
-		return STRING;
-	if (s[0] == '{')
-		return MAP;
-	if ((isdigit(s[0]) || (s[0] == '-' && isdigit(s[1]))))
-		return INTEGER;
-	return BAD;
-}
-
-json	parse_map(FILE *stream)
-{
-	;
+	char	*str = NULL;
+       
+	str = calloc(4096, sizeof(char));
+	if (!str)
+		return NULL;
+	accept(stream, scout);
+	scout = peek(stream);
+	int	i = -1;
+	while (scout != '\"' && scout != EOF)
+	{
+		if (scout == '\\')
+		{
+			accept(stream, scout);
+			scout = peek(stream);
+			if (scout == '\"')
+				str[++i] = '\"';
+			else
+			{
+				str[++i] = '\\';
+				str[++i] = scout;
+			}
+		}
+		else
+			str[++i] = scout;
+		accept(stream, scout);
+		scout = peek(stream);
+	}
+	if (expect(stream, '\"'))  // will print 'unexpected end of input'
+		return str;
+	free(str); // if EOF, then no closing \", report
+	return NULL;
 }
 
 int	argo(json *dst, FILE *stream)
 {
-	char	scout;
-	char	*s = malloc(2);
-	s[1] = 0;
-	size_t	len;
-	int	mode;
+	char	scout = 0;
+	char	*str = NULL;
 	int	num = 0;
-	char	rest[1000];
 
-	scout = peek(stream);
-	if (isdigit(scout) || scout == '-')
+	dst->map.size = 0;
+	while (1)
 	{
-		fscanf(stream, "%d%s", &num, &rest[0]);
-		printf("num: %d\n", num);
-		printf("rest: %s\n", rest);
-		if (!rest[0])
-			printf("no rest\n");
-		mode = INTEGER;
-	}
-	else
-	{
-		while (1)
+		scout = peek(stream);
+		if (scout == EOF)
+			break ;
+		while (scout == ' ')
+			scout = accept_and_get_next_scout(stream, scout);
+		if (isdigit(scout) || scout == '-')
 		{
-			scout = peek(stream);
-			if (scout == EOF)
-				break ;
-			if (!expect(stream, scout))
-			{
-				free(s);
+			fscanf(stream, "%d", &num);
+			*dst = (json){.type = INTEGER, .integer = num};
+			return 1;
+		}
+		if (scout == '\"')
+		{
+			str = extract_string(stream, scout);
+			if (!str)
 				return -1;
-			}
-			len = ft_strlen(s);
-			s = realloc(s, len + 2);
-			s[len] = scout;
-			s[len + 1] = '\0';
+			*dst = (json){.type = STRING, .string = str};
+			return 1;
 		}
-		mode = get_mode(s);
-	}
-	if (mode == BAD)
-		return -1;
-	if (mode == INTEGER)
-	{
-		*dst = (json){.type = INTEGER, .integer = num};
-	}
-	else if (mode == MAP)
-	{
-		json	res_json;
-		res_json = parse_map(stream);
-		//if (!res_json)
-		//	return -1;
-		*dst = res_json;
-	}
-	else if (mode == STRING)
-	{
-		int	i = -1;
-		int	j = -1;
-		int	quotes = 0;
-		int	len = ft_strlen(s);
-		char	*res = malloc(sizeof(char) * len + 1);
-
-		while (++i < len)
+		if (scout == '{')
 		{
-			if (s[i] == '\'')
+			dst->map.data = NULL;
+
+			accept(stream, scout);
+			while (1)
 			{
-				if (quotes == SINGLE)
-					quotes = 0;
-				else
-					quotes = SINGLE;
-			}
-			else if (s[i] == '\"')
-			{
-				if (quotes == DOUBLE)
-					quotes = 0;
-				else
-					quotes = DOUBLE;
-			}
-			else if (s[i] == '\\')
-			{
-				if (s[i + 1] == '\"')
+				dst->map.data = realloc(dst->map.data, \
+						(dst->map.size + 1) * sizeof(pair));
+				if (!dst->map.data)
+					return -1;
+				scout = peek(stream);
+				while (scout == ' ')
+					scout = accept_and_get_next_scout(stream, scout);
+				if (scout == '\"')
 				{
-					res[++j] = '\"';
-					i++;
+					str = extract_string(stream, scout);
+					if (!str)
+						return -1;
+					dst->map.data[dst->map.size].key = str;
+					scout = peek(stream);
+					while (scout == ' ')
+						scout = accept_and_get_next_scout(stream, scout);
+					if (!expect(stream, ':'))
+						return -1;
+					scout = peek(stream);
+					while (scout == ' ')
+						scout = accept_and_get_next_scout(stream, scout);
+					// printf("scout before recursive call: %c\n", scout);
+					if (argo(&dst->map.data[dst->map.size].value, stream) == -1)
+						return -1; // Error in recursive call
+					scout = peek(stream);
+					// printf("dst->map.data.key: %s\n", dst->map.data[0].key);
+					// printf("dst->map.data.val: %d\n", dst->map.data[0].value.integer);
+					// printf("scout after recursive call: %c\n", scout);
 				}
-				else
-					res[++j] = '\\';
+				dst->map.size++;
+				if (scout == '}')
+				{
+					accept(stream, scout);
+					return 1;
+				}
+				else if (scout == EOF)
+				{
+					expect(stream, '}');
+					return -1;
+				}
 			}
-			else
-				res[++j] = s[i];
 		}
-		res[++j] = '\0';
-		*dst = (json){.type = STRING, .string = res};
+		else
+		{
+			if (expect(stream, '}'))
+				return 1;
+			return -1;
+		}
 	}
-	free(s);
-	return 1;
 }
