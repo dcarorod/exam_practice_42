@@ -45,7 +45,7 @@ void	init(bool *city_visited, double *min_dist, double cities[][2], int howmany)
 			*min_dist += distance(cities[i][0], cities[i][1], \
 				cities[i + 1][0], cities[i + 1][1]);
 	}
-	printf("after the loop, i is: %d\n", i);
+	// printf("after the loop, i is: %d\n", i);
 	*min_dist += distance(cities[i][0], cities[i][1], \
 			cities[0][0], cities[0][1]);
 	city_visited[i] = false;
@@ -104,10 +104,11 @@ int	main(void)
 	init(city_visited, &min_dist, cities, HOWMANY);
 	// while (coords[++i][0] >= 0)
 	//	fprintf(stdout, "x1: %'.2f, y1: %'.2f\n", coords[i][0], coords[i][1]);
-	fprintf(stdout, "default total distance: %'.2f\n", min_dist);
+	// fprintf(stdout, "default total distance: %'.2f\n", min_dist);
 	int	i = -1;
-	while (++i < HOWMANY)
-		printf("vis_city_idx: %s\n", city_visited[i] ? "true" : "false");
+	// while (++i < HOWMANY)
+		// printf("vis_city_idx: %s\n", city_visited[i] ? "true" : "false");
 	calc_dist(cities, city_visited, HOWMANY, 0.0, &min_dist, 0, 0);
-	printf("minimum distance to cover all cities: %'.2f\n", min_dist);
+	// printf("minimum distance to cover all cities: %'.2f\n", min_dist);
+	printf("%'.2f\n", min_dist);
 }

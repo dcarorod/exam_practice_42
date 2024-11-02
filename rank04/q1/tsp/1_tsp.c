@@ -129,10 +129,11 @@ int	main(void)
 
 	init(city_visited, &min_dist, cities, howmany);
 	int	i = -1;
-	while (++i < howmany)
-		fprintf(stdout, "x1: %'.2f, y1: %'.2f\n", cities[i][0], cities[i][1]);
-	fprintf(stdout, "default total distance: %'.2f\n", min_dist);
+	// while (++i < howmany)
+		// fprintf(stdout, "x1: %'.2f, y1: %'.2f\n", cities[i][0], cities[i][1]);
+	// fprintf(stdout, "default total distance: %'.2f\n", min_dist);
 	i = -1;
 	calc_dist(cities, city_visited, howmany, 0.0, &min_dist, 0, 0);
-	printf("minimum distance to cover all cities: %'.2f\n", min_dist);
+	// printf("minimum distance to cover all cities: %'.2f\n", min_dist);
+	printf("%'.2f\n", min_dist);
 }
