@@ -85,26 +85,23 @@ char	*extract_string(FILE *stream)
 	return NULL;
 }
 
-int	argo(json *dst, FILE *stream)
+int	parser(json *dst, FILE *stream)
 {
 	char	scout = 0;
 	char	*str = NULL;
 	int	num = 0;
 
 	dst->map.size = 0;
+	dst->map.data = NULL;
 	pace_whitespaces(stream, &scout);
-	if (scout == EOF)
-		return 1;
-	if (isdigit(scout) || scout == '-')
+	if (scout == EOF) // this is only reached by ''
+		return -1;
+	if (isdigit(scout) || scout == '-' || scout == '+')
 	{
 		fscanf(stream, "%d", &num);
-		*dst = (json){.type = INTEGER, .integer = num};
-		pace_whitespaces(stream, &scout);
-		if (scout != EOF && scout != '}' && scout != ',')
-		{
-			expect(stream, EOF);
+		if ((scout != '0' && num == 0) || num == EOF)
 			return -1;
-		}
+		*dst = (json){.type = INTEGER, .integer = num};
 		return 1;
 	}
 	else if (scout == '\"')
@@ -118,8 +115,6 @@ int	argo(json *dst, FILE *stream)
 	}
 	else if (scout == '{')
 	{
-		dst->map.data = NULL;
-
 		accept(stream, scout);
 		while (1)
 		{
@@ -140,9 +135,11 @@ int	argo(json *dst, FILE *stream)
 				return -1;
 			pace_whitespaces(stream, &scout);
 			
-			if (argo(&dst->map.data[dst->map.size].value, stream) == -1)
+			if (parser(&dst->map.data[dst->map.size].value, stream) == -1)
 				return -1; // Error in recursive call
 			dst->map.size++;
+
+			// after parser() success, we only accept ',' or '}'
 			pace_whitespaces(stream, &scout);
 			if (scout == ',')
 			{
@@ -150,14 +147,21 @@ int	argo(json *dst, FILE *stream)
 				pace_whitespaces(stream, &scout);
 				continue ;
 			}
-			if (!expect(stream, '}')) // only '}' acceptable if not ','
+			if (!expect(stream, '}'))
 				return -1;
 			return 1;
 		}
 	}
-	else
-	{
-		if (!expect(stream, EOF));
-			return -1;
-	}
+}
+
+int	argo(json *dst, FILE *stream)
+{
+	char	scout;
+
+	if (parser(dst, stream) == -1)
+		return -1;
+	pace_whitespaces(stream, &scout);
+	if (!expect(stream, EOF))
+		return -1;
+	return 1;
 }
