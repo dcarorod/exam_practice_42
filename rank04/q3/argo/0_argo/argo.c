@@ -92,82 +92,72 @@ int	argo(json *dst, FILE *stream)
 	int	num = 0;
 
 	dst->map.size = 0;
-	while (1)
+	pace_whitespaces(stream, &scout);
+	if (scout == EOF)
+		return 1;
+	if (isdigit(scout) || scout == '-')
 	{
+		fscanf(stream, "%d", &num);
+		*dst = (json){.type = INTEGER, .integer = num};
 		pace_whitespaces(stream, &scout);
-		if (scout == EOF)
-			break ;
-		if (isdigit(scout) || scout == '-')
-		{
-			fscanf(stream, "%d", &num);
-			*dst = (json){.type = INTEGER, .integer = num};
-			pace_whitespaces(stream, &scout);
-			if (scout != EOF && scout != '}' && scout != ',')
-			{
-				expect(stream, EOF);
-				return -1;
-			}
-			return 1;
-		}
-		else if (scout == '\"')
-		{
-			accept(stream, scout);
-			str = extract_string(stream);
-			if (!str)
-				return -1;
-			*dst = (json){.type = STRING, .string = str};
-			return 1;
-		}
-		else if (scout == '{')
-		{
-			dst->map.data = NULL;
-
-			accept(stream, scout);
-			while (1)
-			{
-				dst->map.data = realloc(dst->map.data, \
-						(dst->map.size + 1) * sizeof(pair));
-				if (!dst->map.data)
-					return -1;
-				pace_whitespaces(stream, &scout);
-				if (!expect(stream, '\"'))
-					return -1;
-				str = extract_string(stream);
-				if (!str)
-					return -1;
-				dst->map.data[dst->map.size].key = str;
-				
-				pace_whitespaces(stream, &scout);
-				if (!expect(stream, ':'))
-					return -1;
-				pace_whitespaces(stream, &scout);
-				
-				if (argo(&dst->map.data[dst->map.size].value, stream) == -1)
-					return -1; // Error in recursive call
-				dst->map.size++;
-				pace_whitespaces(stream, &scout);
-				if (scout == ',')
-				{
-					scout = accept_and_get_next_scout(stream, scout);
-					pace_whitespaces(stream, &scout);
-					continue ;
-				}
-				if (scout == '}')
-				{
-					accept(stream, scout);
-					return 1;
-				}
-				else if (scout == EOF)
-				{
-					expect(stream, '}');
-					return -1;
-				}
-			}
-		}
-		else
+		if (scout != EOF && scout != '}' && scout != ',')
 		{
 			expect(stream, EOF);
 			return -1;
 		}
+		return 1;
+	}
+	else if (scout == '\"')
+	{
+		accept(stream, scout);
+		str = extract_string(stream);
+		if (!str)
+			return -1;
+		*dst = (json){.type = STRING, .string = str};
+		return 1;
+	}
+	else if (scout == '{')
+	{
+		dst->map.data = NULL;
+
+		accept(stream, scout);
+		while (1)
+		{
+			dst->map.data = realloc(dst->map.data, \
+					(dst->map.size + 1) * sizeof(pair));
+			if (!dst->map.data)
+				return -1;
+			pace_whitespaces(stream, &scout);
+			if (!expect(stream, '\"'))
+				return -1;
+			str = extract_string(stream);
+			if (!str)
+				return -1;
+			dst->map.data[dst->map.size].key = str;
+				
+			pace_whitespaces(stream, &scout);
+			if (!expect(stream, ':'))
+				return -1;
+			pace_whitespaces(stream, &scout);
+			
+			if (argo(&dst->map.data[dst->map.size].value, stream) == -1)
+				return -1; // Error in recursive call
+			dst->map.size++;
+			pace_whitespaces(stream, &scout);
+			if (scout == ',')
+			{
+				scout = accept_and_get_next_scout(stream, scout);
+				pace_whitespaces(stream, &scout);
+				continue ;
+			}
+			if (!expect(stream, '}')) // only '}' acceptable if not ','
+				return -1;
+			return 1;
+		}
+	}
+	else
+	{
+		if (!expect(stream, EOF));
+			return -1;
 	}
 }
