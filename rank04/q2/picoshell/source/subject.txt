@@ -25,7 +25,7 @@ contain [sic] something to help you test your function.
 Examples: 
 ./picoshell /bin/ls "|" /usr/bin/grep picoshell
 picoshell
-./picoshell echo 'squalala' "|" cat "|" sed '/s/a/b/g'
+./picoshell echo 'squalala' "|" cat "|" sed 's/a/b/g'
 squblblb
 
 ___________________________________________________________________

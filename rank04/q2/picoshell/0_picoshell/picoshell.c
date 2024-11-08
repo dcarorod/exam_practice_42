@@ -41,7 +41,9 @@ int	picoshell(char **cmds[])
 			}
 			if (i == cmds_size - 1)
 			{
-				if (dup2(fds[cmds_size - 1][0], STDIN_FILENO) == -1)
+				if (dup2(fds[i - 1][0], STDIN_FILENO) == -1)
+					return 1;
+				if (close(fds[i - 1][0]) == -1)
 					return 1;
 				execvp(cmds[i][0], cmds[i]);
 			}
@@ -59,7 +61,24 @@ int	picoshell(char **cmds[])
 			}
 		}
 		else
+		{
+			if (i == 0)
+			{
+				if (close(fds[i][1]) == -1)
+					return 1;
+			}
+			if (i == cmds_size - 1)
+			{
+				if (close(fds[i - 1][0]) == -1)
+					return 1;
+			}
+			else if (i > 0)
+			{
+				if (close(fds[i][1]) == -1 || close(fds[i - 1][0]) == -1)
+					return 1;
+			}
 			wait(&w[i]);
+		}
 	}
 	return 0;
 }
