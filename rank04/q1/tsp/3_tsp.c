@@ -1,7 +1,6 @@
 
 /*
-The final version which checks each city as starting city.
-Proven to be unnecessary.
+The final version with a single starting city (index 0)
 */
 
 
@@ -11,6 +10,9 @@ Proven to be unnecessary.
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
+
+#define CITY_0 0
+#define NO_PREV -1
 
 double	distance(double x1, double y1, double x2, double y2)
 {
@@ -24,18 +26,6 @@ bool	all_cities_visited(bool *visited, int count)
 	while (++i < count)
 	{
 		if (!visited[i])
-			return false;
-	}
-	return true;
-}
-
-bool	no_cities_visited(bool *visited, int count)
-{
-	int	i = -1;
-
-	while (++i < count)
-	{
-		if (visited[i])
 			return false;
 	}
 	return true;
@@ -65,9 +55,6 @@ void	get_coords(double c[][2], int count)
 
 	while (fscanf(stdin, "%lf, %lf", &c[i][0], &c[i][1]) == 2)
 		i++;
-	i = -1;
-	//while (++i < count)
-	//	printf("c[%d][0]: %f && c[%d][1]: %f\n", i, c[i][0], i, c[i][1]);
 }
 
 void	init(double c[][2], bool *visited, double *min, int count)
@@ -87,34 +74,29 @@ void	init(double c[][2], bool *visited, double *min, int count)
 	*min = aggr;
 }
 
-void	process(double c[][2], bool *v, double aggr, double *min, int count, int prev, int *first)
+void	process(double c[][2], bool *v, double aggr, double *min, int count, int prev)
 {
-	if (all_cities_visited(v, count))
+	if (all_cities_visited(v, count)) // base case
 	{
-		aggr += distance(c[prev][0], c[prev][1], c[*first][0], c[*first][1]);
+		aggr += distance(c[prev][0], c[prev][1], c[CITY_0][0], c[CITY_0][1]);
 		if (aggr < *min)
-		{
 			*min = aggr;
-			printf("new min: %'.2f. Starting city: %d\n", *min, *first);
-		}
 		return ;
 	}
-	int	th = -1;
-	while (++th < count)
+    if (prev == NO_PREV) // optimization: first recursive call returns
+    {
+        v[CITY_0] = true;
+        return process(c, v, 0.00, min, count, CITY_0);
+    }
+	int	this_one = -1;
+	while (++this_one < count) // assumptions generator
 	{
-		double	dist;
-		if (v[th])
+		if (v[this_one])
 			continue ;
-		if (prev == -1)
-		{
-			*first = th;
-			printf("new starting city: %d\n", *first);
-		}
-		else
-			dist = distance(c[prev][0], c[prev][1], c[th][0], c[th][1]);
-		v[th] = true;
-		process(c, v, aggr + dist, min, count, th, first);
-		v[th] = false;
+        double	dist = distance(c[prev][0], c[prev][1], c[this_one][0], c[this_one][1]);
+		v[this_one] = true;
+		process(c, v, aggr + dist, min, count, this_one);
+		v[this_one] = false;
 	}
 }
 
@@ -124,11 +106,9 @@ int	main(void)
 	double	c[count][2];
 	bool	visited[count];
 	double	min = 0.00;
-	int	first = -1;
 
 	get_coords(c, count);
 	init(c, visited, &min, count);
-	printf("%'.2f\n", min);
-	process(c, visited, 0.00, &min, count, -1, &first);
+	process(c, visited, 0.00, &min, count, NO_PREV);
 	printf("%'.2f\n", min);
 }
