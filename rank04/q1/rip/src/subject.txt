@@ -33,5 +33,5 @@ Examples:
 
 ===============================================================================
 my notes:
-	- what about '))))' ?
-	- looks kindof recursive (is there a tree of solutions ?)
+	Q: what about  '))))' ?
+	A: four spaces '    '
