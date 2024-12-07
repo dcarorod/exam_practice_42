@@ -20,22 +20,3 @@ int	accept(char *s, char c);
 int	expect(char *s, char c);
 int	eval_tree(node *tree);
 node	*pars_expr(char *s);
-
-/*
-
-./vbc '1'
-1
-./vbc '3*4+5'
-17
-./vbc '(3+4)*5'
-35
-./vbc (((((((1)))))))
-1
-./vbc '(((((2+2)*2+2)*2+2)*2+2)*2+2)*2'
-188
-./vbc '1+2+3+4+5'
-15
-./vbc '((1+3)*12+(3*(2+6)))'
-unexpected token '2'
-
-*/
