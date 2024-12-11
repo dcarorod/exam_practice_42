@@ -53,7 +53,8 @@ int main()
         return 1;
     
     // Try all permutations
-    do {
+    while (1)
+    {
         float current_distance = calculate_total_distance(cities, path, city_count);
         if (current_distance < min_distance)
             min_distance = current_distance;
@@ -75,7 +76,7 @@ int main()
         for (i++, j = city_count - 1; i < j; i++, j--)
             ft_swap(&path[i], &path[j]);
             
-    } while (1);
+    }
     
     printf("%.2f\n", min_distance);
     return 0;
