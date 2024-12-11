@@ -58,20 +58,20 @@ int main()
         float current_distance = calculate_total_distance(cities, path, city_count);
         if (current_distance < min_distance)
             min_distance = current_distance;
-            
+
         // Generate next permutation
         int i = city_count - 2;
         while (i >= 0 && path[i] > path[i + 1])
             i--;
         if (i < 0)
             break;
-            
+
         int j = city_count - 1;
         while (path[j] < path[i])
             j--;
-            
+
         ft_swap(&path[i], &path[j]);
-        
+
         // Reverse suffix
         i++;
         j = city_count - 1;
@@ -82,7 +82,6 @@ int main()
             j--;
         }
     }
-    
     printf("%.2f\n", min_distance);
     return 0;
 }
