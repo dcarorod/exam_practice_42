@@ -73,9 +73,14 @@ int main()
         ft_swap(&path[i], &path[j]);
         
         // Reverse suffix
-        for (i++, j = city_count - 1; i < j; i++, j--)
+        i++;
+        j = city_count - 1;
+        while (i < j)
+        {
             ft_swap(&path[i], &path[j]);
-            
+            i++;
+            j--;
+        }
     }
     
     printf("%.2f\n", min_distance);
