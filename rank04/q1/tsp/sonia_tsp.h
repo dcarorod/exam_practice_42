@@ -1,8 +1,6 @@
 #ifndef TSP_H
 #define TSP_H
 
-#include <stdbool.h>
-
 #define MAX_CITIES 11
 
 typedef struct {
