@@ -1,9 +1,5 @@
 #include <stdio.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <math.h>
-#include <string.h>
-#include <stdbool.h>
 // #include "tsp.h"
 #include "sonia_tsp.h"
 
