@@ -14,7 +14,7 @@ void print_sets_of_specific_sum(
 	for (int i = 0; i < len; i++) {
 		fixed_size_set[set_idx] = s[i];
 		if (depth == 1 && fixed_size_set[set_idx] == n) {
-			for (int j = 0; j < set_idx + 1; ++j) {
+			for (int j = 0; j < set_idx + 1; j++) {
 				if (j != 0)
 					printf(" ");
 				printf("%d", fixed_size_set[j]);
