@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
 
   set sa(*a);
   set st(*t);
+  std::cout << "begin inserting into set" << std::endl;
   for (int i = 1; i < argc; i++) {
     st.insert(atoi(argv[i]));
     sa.insert(atoi(argv[i]));

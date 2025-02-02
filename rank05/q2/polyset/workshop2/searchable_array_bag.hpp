@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <iostream>
 #include "searchable_bag.hpp"
 #include "array_bag.hpp"
 
@@ -17,11 +19,7 @@ public:
     searchable_array_bag() : searchable_bag(), array_bag() {}
     ~searchable_array_bag() {}
     searchable_array_bag(const searchable_array_bag& other) :
-        searchable_bag(other),
-        array_bag(other) {
-            size = other.size;
-            data = other.data;
-        }
+        array_bag(other) {}
     searchable_array_bag operator=(const searchable_array_bag& other) {
         if (this != &other) {
             searchable_bag::operator=(other);
