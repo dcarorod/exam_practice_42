@@ -20,7 +20,7 @@ int	argo(json *dst, FILE *stream)
 {
 	if (!stream)
 		return (-1);
-	
+
 	*dst = parse_json(stream);
 	if (g_error_no_key)
 	{
@@ -137,12 +137,12 @@ char	*parse_string(FILE *stream)
 		cur_char = getc(stream);
 		if (cur_char == '\\')
 		{
-			cur_char = getc(stream);
-			if (cur_char != '\\' && cur_char != '\"')
+			if (peek(stream) != '\\' && peek(stream) != '\"')
 			{
 				set_g_error();
 				return (res);
 			}
+			cur_char = getc(stream);
 		}
 		res[str_len - 1] = cur_char;
 	}
