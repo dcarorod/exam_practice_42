@@ -1,20 +1,23 @@
 #include "argo.h"
 
-void free_json(json j) {
-    switch (j.type) {
-        case MAP:
-            for (size_t i = 0; i < j.map.size; i++) {
-            free(j.map.data[i].key);
-            free_json(j.map.data[i].value);
-        }
-        free(j.map.data);
-        break;
-        case STRING:
-            free(j.string);
-            break;
-        default:
-            break;
-    }
+void	free_json(json j)
+{
+	switch (j.type) {
+		case MAP:
+			for (size_t i = 0; i < j.map.size; i++)
+			{
+				free(j.map.data[i].key);
+				free_json(j.map.data[i].value);
+			}
+			free(j.map.data);
+			break;
+		case STRING:
+			free(j.string);
+			break;
+		default:
+			printf("inside default\n");
+			break;
+	}
 }
 
 void serialize(json j) {
@@ -50,11 +53,8 @@ int main(int ac, char **av) {
         return 1;
     char *filename = av[1];
     FILE *stream = fopen(filename, "r");
-    json file;
-    if (!stream) {
-        perror("fmemopen");
-        return 1;
-    }
+    json file = { .type = 42 }; // set to invalid type in order to invoke default case in free_json()
+
     if (argo(&file, stream) != 1) {
         free_json(file);
         return 1;

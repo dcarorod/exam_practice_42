@@ -18,6 +18,9 @@ int		g_error_no_key = 0;
 
 int	argo(json *dst, FILE *stream)
 {
+	if (!stream)
+		return (-1);
+	
 	*dst = parse_json(stream);
 	if (g_error_no_key)
 	{
